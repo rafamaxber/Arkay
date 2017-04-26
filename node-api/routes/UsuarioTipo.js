@@ -5,13 +5,13 @@ module.exports = (app) => {
     selectUsuarioTipo: (req, res, id) => {
       if (id) {
         return ControllerUsuarioTipo.selectById(id, ( err, result ) => {
-          if (err) res.status(400).json(err);
+          if (err) return res.status(400).json(err);
           return res.status(200).json( $private.setClientResponse(result) );
         });
       }
 
       return ControllerUsuarioTipo.selectAll(( err, result ) => {
-        if (err) res.status(400).json(err);
+        if (err) return res.status(400).json(err);
         return res.status(200).json( $private.setClientResponse(result) );
       });
     },
@@ -56,6 +56,12 @@ module.exports = (app) => {
       const paramsErrors = req.validationErrors();
       if (paramsErrors) return paramsErrors;
       return false;
+    },
+
+    checkBody: (req) => {
+      const bodyLength = Object.keys(req.body).length;
+      if ( bodyLength ) return 'Não foi possível receber as informações enviadas!';
+      return false;
     }
   }
 
@@ -64,8 +70,10 @@ module.exports = (app) => {
   });
 
   app.post(routePath, (req, res) => {
+    const checkBody = $private.checkBody(req);
+    if (checkBody) return res.status(400).json( checkBody );
     ControllerUsuarioTipo.save(req, (err, result) => {
-      if (err) res.status(400).json(err);
+      if (err) return res.status(400).json(err);
       return $private.selectUsuarioTipo(req, res, result.insertId );
     });
   });
@@ -73,11 +81,13 @@ module.exports = (app) => {
   app.put(`${routePath}:id?`, (req, res) => {
     const id = req.params.id;
     const paramsErrors = $private.checkParams(req);
+    const checkBody = $private.checkBody(req);
 
     if (paramsErrors) return res.status(400).json( paramsErrors );
+    if (checkBody) return res.status(400).json( checkBody );
 
     ControllerUsuarioTipo.update(req, id, (err, result) => {
-      if (err) res.status(400).json(err);
+      if (err) return res.status(400).json(err);
       return $private.selectUsuarioTipo(req, res, id);
     });
   });
@@ -89,7 +99,7 @@ module.exports = (app) => {
     if (paramsErrors) return res.status(400).json( paramsErrors );
 
     ControllerUsuarioTipo.delete(req, id, (err, result) => {
-      if (err) res.status(400).json(err);
+      if (err) return res.status(400).json(err);
       return $private.selectUsuarioTipo(req, res, id);
     });
   });

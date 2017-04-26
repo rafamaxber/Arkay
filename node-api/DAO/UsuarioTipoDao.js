@@ -1,3 +1,5 @@
+const helperDAO = require('./helperDAO');
+
 function TipoDao(connection) {
  this._connection = connection;
 }
@@ -15,16 +17,8 @@ TipoDao.prototype.save = function(tipo, callback) {
 }
 
 TipoDao.prototype.update = function(tipo, id, callback) {
-  let query = '';
-  let sql = '';
-  let inserts = [];
-  Object.keys( tipo ).forEach(item => {
-    query += ` ${item} = ?,`;
-    inserts.push(tipo[item]);
-  });
-  query = query.replace(/,$/g, '');
-  sql = 'UPDATE tipo SET' + query + ' WHERE id = ?';
-  sql = this._connection.format(sql, inserts);
+  let queryAndFields = helperDAO.update( 'tipo', tipo );
+  let sql = this._connection.format(queryAndFields.query, queryAndFields.inserts);
   this._connection.query(sql, [id], callback);
 }
 
