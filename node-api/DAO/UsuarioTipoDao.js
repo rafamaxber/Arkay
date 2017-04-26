@@ -14,8 +14,18 @@ TipoDao.prototype.save = function(tipo, callback) {
   this._connection.query('INSERT INTO tipo SET ?', tipo, callback);
 }
 
-TipoDao.prototype.update = function(newNome, id, callback) {
-  this._connection.query('UPDATE tipo SET nome = ? WHERE id = ?', [newNome.nome, id], callback);
+TipoDao.prototype.update = function(tipo, id, callback) {
+  let query = '';
+  let sql = '';
+  let inserts = [];
+  Object.keys( tipo ).forEach(item => {
+    query += ` ${item} = ?,`;
+    inserts.push(tipo[item]);
+  });
+  query = query.replace(/,$/g, '');
+  sql = 'UPDATE tipo SET' + query + ' WHERE id = ?';
+  sql = this._connection.format(sql, inserts);
+  this._connection.query(sql, [id], callback);
 }
 
 TipoDao.prototype.delete = function(id, callback) {
