@@ -60,7 +60,7 @@ module.exports = (app) => {
 
     checkBody: (req) => {
       const bodyLength = Object.keys(req.body).length;
-      if ( bodyLength ) return 'Não foi possível receber as informações enviadas!';
+      if ( bodyLength === 0 ) return 'Não foi possível receber as informações enviadas!';
       return false;
     }
   }

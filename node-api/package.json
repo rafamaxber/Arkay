@@ -4,6 +4,10 @@
   "main": "index.js",
   "author": "Rafael Bernardo <rafamaxber@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "dependencies": {
     "body-parser": "^1.17.1",
     "consign": "^0.1.4",
@@ -14,5 +18,10 @@
     "morgan": "^1.8.1",
     "mysql": "2.13.0",
     "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "chai": "3.5.0",
+    "mocha": "3.3.0",
+    "sinon": "2.1.0"
   }
 }
