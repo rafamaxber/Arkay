@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const morgan = require('morgan');
 const Logger = require('../services/Logger');
+const dotenv = require('dotenv').config();
 
 module.exports = () => {
   const app = express();

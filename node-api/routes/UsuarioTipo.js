@@ -1,3 +1,5 @@
+const messages = require('../util/pt_br-messages');
+
 module.exports = (app) => {
   const routePath = '/';
   const ControllerUsuarioTipo = app.controller.ControllerUsuarioTipo;
@@ -23,36 +25,36 @@ module.exports = (app) => {
           {
             link: `http://localhost:3000/tipos/:id-tipo`,
             method: 'PUT',
-            rel: 'Atualizar tipo'
+            rel: messages.usuario_tipo.PUT
           },
           {
             link: `http://localhost:3000/tipos/:id-tipo`,
             method: 'DELETE',
-            rel: 'Deleta o tipo selecionado'
+            rel: messages.usuario_tipo.DELETE
           },
           {
             link: `http://localhost:3000/tipos/`,
             method: 'POST',
-            rel: 'Incluir novo tipo de usuario'
+            rel: messages.usuario_tipo.POST
           },
           {
             link: `http://localhost:3000/tipos/`,
             method: 'GET',
-            rel: 'Lista todos os tipos'
+            rel: messages.usuario_tipo.GET_ALL
           },
           {
             link: `http://localhost:3000/tipos/:id-tipo`,
             method: 'GET',
-            rel: 'Lista apenas o tipo com o id passado'
+            rel: messages.usuario_tipo.GET
           }
         ]
       };
     },
 
     checkParams: (req) => {
-      req.checkParams('id', 'Parâmetros inválidos!')
+      req.checkParams('id', messages.urlParams_undefined)
         .notEmpty()
-        .isInt().withMessage('Tipo do parâmetro é inválido!');
+        .isInt().withMessage(messages.urlParams_type);
       const paramsErrors = req.validationErrors();
       if (paramsErrors) return paramsErrors;
       return false;
@@ -60,7 +62,10 @@ module.exports = (app) => {
 
     checkBody: (req) => {
       const bodyLength = Object.keys(req.body).length;
-      if ( bodyLength === 0 ) return 'Não foi possível receber as informações enviadas!';
+      if ( bodyLength === 0 ) return { 
+        "msg": messages.req_body_empty, 
+        "body": req.body
+      };
       return false;
     }
   }
@@ -82,7 +87,6 @@ module.exports = (app) => {
     const id = req.params.id;
     const paramsErrors = $private.checkParams(req);
     const checkBody = $private.checkBody(req);
-
     if (paramsErrors) return res.status(400).json( paramsErrors );
     if (checkBody) return res.status(400).json( checkBody );
 
@@ -100,7 +104,10 @@ module.exports = (app) => {
 
     ControllerUsuarioTipo.delete(req, id, (err, result) => {
       if (err) return res.status(400).json(err);
-      return $private.selectUsuarioTipo(req, res, id);
+      if( result.affectedRows )
+        return $private.selectUsuarioTipo(req, res, id);
+      
+      return res.status(411).json({ "msg": messages.nothing_found });
     });
   });
 
