@@ -5,25 +5,23 @@ function TipoDao(connection) {
 }
 
 TipoDao.prototype.selectAll = function(callback) {
-  this._connection.query('SELECT * FROM tipo', callback);
+  helperDAO.select( 'tipo', this._connection, callback);
 }
 
 TipoDao.prototype.selectById = function(id, callback) {
-  this._connection.query('SELECT * FROM tipo WHERE id = ?', id, callback);
+  helperDAO.selectById( 'tipo', id, this._connection, callback);
 }
 
 TipoDao.prototype.save = function(tipo, callback) {
-  this._connection.query('INSERT INTO tipo SET ?', tipo, callback);
+  helperDAO.save( 'tipo', this._connection, tipo, callback);
 }
 
 TipoDao.prototype.update = function(tipo, id, callback) {
-  let queryAndFields = helperDAO.update( 'tipo', tipo );
-  let sql = this._connection.format(queryAndFields.query, queryAndFields.inserts);
-  this._connection.query(sql, [id], callback);
+  helperDAO.update( 'tipo', id, tipo, this._connection, callback);
 }
 
 TipoDao.prototype.delete = function(id, callback) {
-  this._connection.query('DELETE FROM tipo WHERE id = ?', id, callback);
+  helperDAO.delete( 'tipo', id, this._connection, callback);
 }
 
 module.exports = () => TipoDao;
